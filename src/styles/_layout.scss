@@ -1,0 +1,427 @@
+// ===================================================================
+// 反诈大屏 · 布局样式
+// 包含：顶栏（topbar）、KPI 条、三栏布局（grid/pane）、流向箭头、
+//       面板（panel/head/body）、状态灯（lamp）、迷你统计（mini-stat）
+// ===================================================================
+
+@use 'variables' as *;
+
+// ================= 顶栏 =================
+.topbar {
+  height: $header-h;
+  flex: 0 0 $header-h;
+  position: relative;
+  display: grid;
+  grid-template-columns: 5.2rem 1fr 5.2rem; // 520px / 1fr / 520px
+  align-items: center;
+  padding: 0 0.22rem;
+  background:
+    linear-gradient(180deg, rgba(20, 42, 74, 0.85), rgba(10, 20, 38, 0.55)),
+    linear-gradient(90deg, transparent, rgba(56, 225, 255, 0.08), transparent);
+  border: 1px solid $line;
+  border-top: 2px solid rgba(56, 225, 255, 0.55); // 2px 装饰边
+  clip-path: polygon(0 0, calc(100% - 0.26rem) 0, 100% 0.26rem, 100% 100%, 0.26rem 100%, 0 calc(100% - 0.26rem));
+}
+
+.topbar::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  transform: translateX(-50%);
+  width: 56%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, $cyan, transparent);
+  opacity: 0.7;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.14rem;
+}
+
+.brand-badge {
+  width: 0.46rem;
+  height: 0.46rem;
+  position: relative;
+  flex: 0 0 0.46rem;
+  border: 1.5px solid $cyan; // 1.5px 装饰边
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0.14rem rgba(56, 225, 255, 0.35), inset 0 0 0.1rem rgba(56, 225, 255, 0.22);
+}
+
+.brand-badge::before {
+  content: "";
+  width: 0.14rem;
+  height: 0.14rem;
+  background: $cyan;
+  clip-path: polygon(50% 0, 100% 38%, 82% 100%, 18% 100%, 0 38%);
+  box-shadow: 0 0 0.08rem $cyan;
+}
+
+.brand-title {
+  font-size: 0.15rem;
+  letter-spacing: 0.02rem;
+  color: $tx-2;
+  font-weight: 600;
+}
+
+.brand-sub {
+  font-size: 0.11rem;
+  color: $tx-3;
+  letter-spacing: 0.01rem;
+  margin-top: 0.03rem;
+  font-family: $font-mono;
+}
+
+.screen-title {
+  text-align: center;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.screen-title h1 {
+  font-size: 0.32rem;
+  font-weight: 800;
+  letter-spacing: 0.08rem;
+  background: linear-gradient(180deg, #ffffff 30%, #8fdcff 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 0.26rem rgba(56, 225, 255, 0.25);
+}
+
+.screen-title .title-en {
+  font-size: 0.1rem;
+  letter-spacing: 0.05rem;
+  color: $tx-3;
+  margin-top: 0.02rem;
+  font-family: $font-mono;
+  text-transform: uppercase;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.18rem;
+}
+
+.clock {
+  text-align: right;
+}
+
+.clock-time {
+  font-family: $font-mono;
+  font-size: 0.26rem;
+  font-weight: 700;
+  color: $cyan;
+  letter-spacing: 0.02rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.clock-date {
+  font-size: 0.11rem;
+  color: $tx-3;
+  margin-top: 0.01rem;
+  letter-spacing: 0.01rem;
+}
+
+.icon-btn {
+  width: 0.36rem;
+  height: 0.36rem;
+  border: 1px solid $line-strong;
+  background: rgba(56, 225, 255, 0.08);
+  color: $cyan;
+  border-radius: $radius;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background 0.15s;
+}
+
+.icon-btn:hover { background: rgba(56, 225, 255, 0.22); }
+.icon-btn svg { width: 0.18rem; height: 0.18rem; }
+
+// ---- 顶栏下方 KPI 条（位于主区上方）----
+.kpi-strip {
+  flex: 0 0 0.56rem;
+  height: 0.56rem;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.12rem;
+}
+
+.kpi {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.12rem;
+  padding: 0 0.16rem;
+  background: $panel;
+  border: 1px solid $line;
+  clip-path: polygon(0 0, calc(100% - 0.12rem) 0, 100% 0.12rem, 100% 100%, 0.12rem 100%, 0 calc(100% - 0.12rem));
+  overflow: hidden;
+}
+
+.kpi::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0.03rem; // 3px 装饰条
+  background: $cyan;
+  box-shadow: 0 0 0.1rem $cyan;
+}
+
+.kpi.k-amber::before { background: $amber; box-shadow: 0 0 0.1rem $amber; }
+.kpi.k-red::before { background: $red; box-shadow: 0 0 0.1rem $red; }
+.kpi.k-green::before { background: $green; box-shadow: 0 0 0.1rem $green; }
+.kpi.k-purple::before { background: $game; box-shadow: 0 0 0.1rem $game; }
+
+.kpi-num {
+  font-family: $font-mono;
+  font-size: 0.27rem;
+  font-weight: 700;
+  color: $tx-1;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi.k-cyan .kpi-num { color: $cyan; }
+.kpi.k-amber .kpi-num { color: $amber; }
+.kpi.k-red .kpi-num { color: $red; }
+.kpi.k-green .kpi-num { color: $green; }
+.kpi.k-purple .kpi-num { color: $game; }
+
+.kpi-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.03rem;
+}
+
+.kpi-label {
+  font-size: 0.12rem;
+  color: $tx-2;
+  letter-spacing: 0.01rem;
+}
+
+.kpi-note {
+  font-size: 0.1rem;
+  color: $tx-3;
+  font-family: $font-mono;
+}
+
+// ================= 三栏布局 =================
+.grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 24.2% minmax(0, 1fr) 29.2%;
+  gap: 0.12rem;
+  position: relative;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+}
+
+// ---- 栏间流向指示 ----
+.flow-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 5;
+  width: 0.12rem;
+  height: 0.72rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.04rem;
+}
+
+.flow-arrow .fa-line {
+  width: 1px; // 1px 装饰线
+  height: 0.34rem;
+  background: linear-gradient(180deg, transparent, $cyan);
+  position: relative;
+  overflow: visible;
+}
+
+.flow-arrow .fa-line::after {
+  content: "";
+  position: absolute;
+  left: -0.025rem;
+  top: 0;
+  width: 0.06rem;
+  height: 0.06rem;
+  background: $cyan;
+  border-radius: 50%;
+  box-shadow: 0 0 0.08rem $cyan;
+  animation: faDrop 1.8s linear infinite;
+}
+
+.flow-arrow .fa-tri {
+  width: 0;
+  height: 0;
+  border-left: 0.05rem solid transparent;
+  border-right: 0.05rem solid transparent;
+  border-top: 0.07rem solid $cyan;
+  filter: drop-shadow(0 0 0.04rem $cyan);
+}
+
+@keyframes faDrop {
+  0% { top: -0.08rem; opacity: 0; }
+  30% { opacity: 1; }
+  100% { top: 0.34rem; opacity: 0; }
+}
+
+.flow-arrow.fa-1 { left: calc(24.2% - 1px); }
+.flow-arrow.fa-2 { left: calc(24.2% - 0.1rem + 46.6% - 1px); }
+
+// ================= 面板 =================
+.panel {
+  position: relative;
+  background: $panel;
+  border: 1px solid $line;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  backdrop-filter: blur(2px);
+}
+
+.panel::before,
+.panel::after {
+  content: "";
+  position: absolute;
+  width: 0.12rem;
+  height: 0.12rem;
+  pointer-events: none;
+}
+
+.panel::before {
+  left: -1px;
+  top: -1px;
+  border-left: 2px solid $cyan; // 2px 战术角标
+  border-top: 2px solid $cyan;
+}
+
+.panel::after {
+  right: -1px;
+  bottom: -1px;
+  border-right: 2px solid $cyan;
+  border-bottom: 2px solid $cyan;
+}
+
+.panel.grow { flex: 1; }
+.panel.auto { flex: 0 0 auto; }
+
+.panel-head {
+  flex: 0 0 0.38rem;
+  height: 0.38rem;
+  padding: 0 0.12rem 0 0.14rem;
+  display: flex;
+  align-items: center;
+  gap: 0.09rem;
+  border-bottom: 1px solid $line;
+  background: linear-gradient(90deg, rgba(56, 225, 255, 0.10), transparent 70%);
+}
+
+.panel-head .ph-bar {
+  width: 0.04rem;
+  height: 0.15rem;
+  background: $cyan;
+  box-shadow: 0 0 0.08rem $cyan;
+}
+
+.panel-head h3 {
+  font-size: 0.15rem;
+  font-weight: 700;
+  letter-spacing: 0.02rem;
+  color: $tx-1;
+}
+
+.panel-head .ph-sub {
+  font-size: 0.105rem;
+  color: $tx-3;
+  font-family: $font-mono;
+  letter-spacing: 0.005rem;
+}
+
+.panel-head .ph-spacer { flex: 1; }
+
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  padding: 0.1rem 0.12rem;
+}
+
+.panel-body.flush { padding: 0; }
+
+// ---- 状态灯 ----
+.lamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.06rem;
+  font-size: 0.11rem;
+  color: $tx-2;
+}
+
+.lamp i {
+  width: 0.07rem;
+  height: 0.07rem;
+  border-radius: 50%;
+  background: $green;
+  box-shadow: 0 0 0.07rem $green;
+  animation: lampPulse 1.6s ease-in-out infinite;
+}
+
+.lamp.off i {
+  background: #5a6b82;
+  box-shadow: none;
+  animation: none;
+}
+
+.lamp.amber i {
+  background: $amber;
+  box-shadow: 0 0 0.07rem $amber;
+}
+
+@keyframes lampPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+// ---- 迷你统计 ----
+.mini-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.02rem;
+  padding: 0.02rem 0;
+}
+
+.mini-stat b {
+  font-family: $font-mono;
+  font-size: 0.19rem;
+  color: $tx-1;
+  font-variant-numeric: tabular-nums;
+}
+
+.mini-stat span {
+  font-size: 0.105rem;
+  color: $tx-3;
+}
