@@ -77,7 +77,7 @@ function showShot(i: number): void {
 <template>
   <Teleport to="body">
     <template v-if="visible && rec">
-      <div class="overlay" @click="$emit('close')"></div>
+      <div :class="`overlay ${visible ? 'show' : ''}`" @click="$emit('close')"></div>
       <div
         class="modal detail-modal"
         role="dialog"
