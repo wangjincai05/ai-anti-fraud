@@ -1,24 +1,25 @@
 /* ============================================================
  * config.ts · 运行配置（模拟 / 真实接口开关，localStorage 持久化）
- *  迁移自原型 config.js：
+ *  默认值来自环境变量（src/env.ts），localStorage 运行时覆盖优先。
  *   - mode/baseUrl/sseUrl 用 Vue ref 包装（响应式）
- *   - screenshotInterval: 2000
+ *   - screenshotInterval 来自 VITE_SCREENSHOT_INTERVAL
  *   - save() 写 localStorage
  *   - 事件总线 bus（on/emit/off）TS 类型化
  *
  * 真实接口对接约定（源自 02-中区/CatDevicePlatform接口文档.md）：
- *   GET  {baseUrl}/api/v1/devices                       设备列表
- *   GET  {baseUrl}/api/v1/devices/{id}/screenshot?t=    实时截图 PNG
- *   GET  {baseUrl}/api/v1/devices/{id}/ui_tree          UI 控件树
- *   SSE  {sseUrl}                                       text/event-stream 日志长连接
+ *   GET  {baseUrl}{apiPrefix}                       设备列表
+ *   GET  {baseUrl}{apiPrefix}/{id}/screenshot?t=    实时截图 PNG
+ *   GET  {baseUrl}{apiPrefix}/{id}/ui_tree          UI 控件树
+ *   SSE  {sseUrl}                                   text/event-stream 日志长连接
  * ============================================================ */
 import { ref, type Ref } from 'vue';
+import { env, type Mode } from '@/env';
+
+export type { Mode };
 
 const LS_MODE = 'af-screen-mode';
 const LS_BASE = 'af-screen-base-url';
 const LS_SSE = 'af-screen-sse-url';
-
-export type Mode = 'mock' | 'real';
 
 export interface AppConfig {
   mode: Ref<Mode>;
@@ -29,18 +30,20 @@ export interface AppConfig {
 }
 
 function readMode(): Mode {
-  return localStorage.getItem(LS_MODE) === 'real' ? 'real' : 'mock';
+  const saved = localStorage.getItem(LS_MODE);
+  if (saved === 'real' || saved === 'mock') return saved;
+  return env.defaultMode;
 }
 
 export const config: AppConfig = {
   mode: ref(readMode()),
   baseUrl: ref(
-    (localStorage.getItem(LS_BASE) || 'http://192.168.0.109:8080').replace(/\/+$/, ''),
+    (localStorage.getItem(LS_BASE) || env.apiUrl).replace(/\/+$/, ''),
   ),
   sseUrl: ref(
-    localStorage.getItem(LS_SSE) || 'http://192.168.0.109:8080/api/logs',
+    localStorage.getItem(LS_SSE) || env.sseUrl,
   ),
-  screenshotInterval: 2000,
+  screenshotInterval: 150,
   save() {
     localStorage.setItem(LS_MODE, config.mode.value);
     localStorage.setItem(LS_BASE, config.baseUrl.value);

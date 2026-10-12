@@ -111,7 +111,7 @@ const sseLabel = computed(() =>
 }
 
 .wall-panel {
-  flex-basis: 4.08rem;
+  flex-basis: 5.28rem;
 }
 
 .panel-head {

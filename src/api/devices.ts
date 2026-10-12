@@ -1,25 +1,27 @@
 /* ============================================================
  * devices.ts · 设备画面适配层（real 模式 API 封装）
  *   getDevices       GET /api/v1/devices
- *   getScreenshot    GET /api/v1/devices/{id}/screenshot?t=
- *                    444 = 在线但暂无图 → 返回 null
+ *   getFrameUrl      GET /api/v1/devices/{id}/frame?t={shot_at}
+ *                    帧槽缓存 JPEG 直链（只读），供 <img src> 直接绑定
  *   getUiTree        GET /api/v1/devices/{id}/ui_tree
  * ============================================================ */
 
 import type { Device } from './types';
-
-const API_PREFIX = '/api/v1/devices';
+import { env } from '@/env';
+import { JSON_HEADERS } from './http';
 
 function joinUrl(baseUrl: string, path: string, query = ''): string {
-  return baseUrl.replace(/\/+$/, '') + API_PREFIX + path + query;
+  return baseUrl.replace(/\/+$/, '') + env.apiPrefix + path + query;
 }
 
 /**
  * 获取设备列表
- * @param baseUrl 中控基础地址，如 http://192.168.1.10:8000
+ * @param baseUrl 中控基础地址，如 https://smart-agent.work/apps/catdevice
+ *                 开发环境配合 vite server.proxy 用相对前缀（如 catdevice）
  */
 export async function getDevices(baseUrl: string): Promise<Device[]> {
-  const res = await fetch(joinUrl(baseUrl, ''));
+  const url = joinUrl(baseUrl, '');
+  const res = await fetch(url, { headers: JSON_HEADERS });
   if (!res.ok) {
     throw new Error('设备列表获取失败：HTTP ' + res.status + '（请检查中控地址/CORS）');
   }
@@ -28,25 +30,11 @@ export async function getDevices(baseUrl: string): Promise<Device[]> {
 }
 
 /**
- * 获取设备截图（PNG blob URL）
- * @param t        防缓存时间戳；不传则自动取 Date.now()
- * @returns        blob: URL（调用方用完应 URL.revokeObjectURL 释放）
- *                  在线但暂无图（HTTP 444）返回 null
+ * 设备帧槽画面 URL（缓存 JPEG，只读）
+ * 直接作为 <img src> 绑定；t 取 shot_at，同帧 URL 不变，浏览器缓存自动去重
  */
-export async function getScreenshot(
-  baseUrl: string,
-  deviceId: string,
-  t?: number
-): Promise<string | null> {
-  const ts = typeof t === 'number' ? t : Date.now();
-  const url = joinUrl(baseUrl, '/' + encodeURIComponent(deviceId) + '/screenshot', '?t=' + ts);
-  const res = await fetch(url);
-  if (res.status === 444) return null; // 在线但暂无图
-  if (!res.ok) {
-    throw new Error('截图获取失败：HTTP ' + res.status);
-  }
-  const blob = await res.blob();
-  return URL.createObjectURL(blob);
+export function getFrameUrl(baseUrl: string, deviceId: string, shotAt: number): string {
+  return joinUrl(baseUrl, '/' + encodeURIComponent(deviceId) + '/frame', '?t=' + shotAt);
 }
 
 /**
@@ -54,7 +42,7 @@ export async function getScreenshot(
  */
 export async function getUiTree(baseUrl: string, deviceId: string): Promise<any> {
   const url = joinUrl(baseUrl, '/' + encodeURIComponent(deviceId) + '/ui_tree');
-  const res = await fetch(url);
+  const res = await fetch(url, { headers: JSON_HEADERS });
   if (!res.ok) {
     throw new Error('UI 树获取失败：HTTP ' + res.status);
   }
