@@ -109,10 +109,10 @@ function moveDevice(step: number): void {
   transitionName.value = step > 0 ? 'phone-next' : 'phone-prev';
 
   // 设备数 ≤ 可见数：全部可见，只移动选中高亮
-  if (total <= maxVisibleDevices) {
-    selectedDeviceIndex.value = (selectedDeviceIndex.value + step + total) % total;
-    return;
-  }
+  // if (total <= maxVisibleDevices) {
+  //   selectedDeviceIndex.value = (selectedDeviceIndex.value + step + total) % total;
+  //   return;
+  // }
 
   // 整页翻转：每次推进 maxVisibleDevices 步
   const maxStart = total - maxVisibleDevices;
@@ -256,7 +256,6 @@ onBeforeUnmount(stop);
           <div
             class="thumbwrap"
             :class="{
-              active: d.deviceId === cards[selectedDeviceIndex]?.deviceId,
               refreshing: refreshing[d.deviceId],
             }"
             @click="openLightbox(d.deviceId)"
