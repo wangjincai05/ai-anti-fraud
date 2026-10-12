@@ -16,7 +16,7 @@ import { useModal } from '@/composables/useModal'
 
 // 弹窗状态：useModal 提供 isOpen + open/close，并自动监听 ESC 关闭
 const { isOpen: detailOpen, open: openDetail, close: closeDetail } = useModal()
-const { isOpen: settingsOpen, open: openSettings, close: closeSettings } = useModal()
+const { isOpen: settingsOpen, close: closeSettings } = useModal()
 
 // 点击的码墙卡片索引
 const detailIdx = ref(0)
@@ -33,7 +33,7 @@ const SettingsModal = defineAsyncComponent(() => import('@/components/SettingsMo
 <template>
   <div id="viewport">
     <div id="stage">
-      <AppHeader @open-settings="openSettings" />
+      <AppHeader/>
       <MainGrid @open-detail="onOpenDetail" />
       <DetailModal
         v-if="detailOpen"
