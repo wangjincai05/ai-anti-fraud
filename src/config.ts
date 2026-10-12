@@ -43,7 +43,7 @@ export const config: AppConfig = {
   sseUrl: ref(
     localStorage.getItem(LS_SSE) || env.sseUrl,
   ),
-  screenshotInterval: 150,
+  screenshotInterval: 1000,
   save() {
     localStorage.setItem(LS_MODE, config.mode.value);
     localStorage.setItem(LS_BASE, config.baseUrl.value);

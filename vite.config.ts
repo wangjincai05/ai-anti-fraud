@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
       port: Number(env.PORT) || 5173,
       proxy: {
         '/catdevice': {
-          target: 'https://smart-agent.work/apps/catdevice',
+          target: 'http://192.168.0.103:8080',
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/catdevice/, ''),

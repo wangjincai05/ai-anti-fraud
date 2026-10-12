@@ -179,10 +179,7 @@ async function pollRealShots(): Promise<void> {
     for (const c of cards.value) {
       const fresh = next.find((x) => x.deviceId === c.deviceId);
       const sa = fresh ? fresh.shotAt : 0;
-      if (sa > 0 && sa !== c.shotAt) {
-        c.shotAt = sa; // 记录新 shotAt
-        setShot(c.deviceId, getFrameUrl(config.baseUrl.value, c.deviceId, sa));
-      }
+      setShot(c.deviceId, getFrameUrl(config.baseUrl.value, c.deviceId, sa));
     }
   } finally {
     realPolling = false;
@@ -647,7 +644,7 @@ onBeforeUnmount(stop);
   display: flex;
   flex-direction: column;
   padding: 0.2rem;
-  background: $panel-2;
+  background: $bg-panel-2;
   border-left: 0.01rem solid $bg-line;
   box-shadow: -0.18rem 0 0.5rem rgba(0, 0, 0, 0.45);
   overflow: auto;
@@ -661,7 +658,7 @@ onBeforeUnmount(stop);
   width: 0.28rem;
   height: 0.28rem;
   border: 0.01rem solid rgba(160, 190, 220, 0.4);
-  background: rgba(2, 18, 30, 0.9);
+  background: rgba(2, 18, 30, 1);
   color: $tx-1;
   cursor: pointer;
 }
